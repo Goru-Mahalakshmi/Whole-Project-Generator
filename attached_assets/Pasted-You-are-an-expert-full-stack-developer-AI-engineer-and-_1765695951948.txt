@@ -1,0 +1,50 @@
+You are an expert full-stack developer, AI engineer, and coding mentor. I want you to generate a **complete, ready-to-run hackathon project** that does the following:
+
+**Project Overview:**
+- A web application called "Repository Mirror AI" that analyzes a student's GitHub repository.
+- User pastes a **public GitHub repository URL**.
+- The system automatically:
+  1. Clones the repo.
+  2. Analyzes the repo: file/folder count, folder structure, README presence, test files, commit history, branches, languages, tech stack.
+  3. Sends structured data to an **LLM (GPT-4 / Gemini)**.
+  4. LLM generates:
+     - Score (0–100) + Skill level (Beginner / Intermediate / Advanced)
+     - Short summary of repo quality
+     - Personalized roadmap of actionable improvements
+
+**Frontend Requirements:**
+- Use **React.js or Next.js** + Tailwind CSS.
+- Input box for GitHub URL and a submit button.
+- Display output: Score (number + skill level), Summary, Roadmap (bullet points), optional radar chart for dimensions.
+- Nice animations, light/dark mode toggle, responsive design.
+
+**Backend Requirements:**
+- Use **FastAPI (Python) or Node.js (Express)**.
+- Endpoint receives GitHub repo URL.
+- Clones repo locally using **GitPython** (if Python) or simple git commands.
+- Analyzes:
+  - File/folder count
+  - README existence and length
+  - Test files/folders
+  - Languages / tech stack
+  - Commit count, branches, PRs
+  - Code quality (Python: `pylint`, `radon`; JS: `eslint`)
+- Sends JSON of analysis to LLM API.
+- Returns LLM output to frontend in JSON format.
+
+**LLM Integration:**
+- Use **OpenAI GPT-4 API** or **Gemini**.
+- Prompt LLM with structured JSON analysis.
+- Generate Score, Summary, Roadmap as JSON.
+- Output JSON example:
+```json
+{
+  "score": 85,
+  "skill_level": "Advanced",
+  "summary": "The repo has clean code, consistent commits, but minimal tests.",
+  "roadmap": [
+    "Add unit tests using pytest or Jest",
+    "Improve README with setup and usage instructions",
+    "Add CI/CD using GitHub Actions"
+  ]
+}
