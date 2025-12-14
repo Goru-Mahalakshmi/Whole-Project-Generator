@@ -1,18 +1,52 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export const githubUrlSchema = z.object({
+  url: z.string().url().refine(
+    (url) => /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/.test(url),
+    { message: "Please enter a valid GitHub repository URL" }
+  ),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export type GithubUrlInput = z.infer<typeof githubUrlSchema>;
+
+export interface RepoMetadata {
+  name: string;
+  owner: string;
+  fileCount: number;
+  folderCount: number;
+  hasReadme: boolean;
+  readmeLength: number;
+  hasTests: boolean;
+  testFileCount: number;
+  languages: string[];
+  techStack: string[];
+  commitCount: number;
+  branchCount: number;
+  lastCommitDate: string;
+  folderStructure: string[];
+}
+
+export interface AnalysisResult {
+  score: number;
+  skillLevel: "Beginner" | "Intermediate" | "Advanced";
+  summary: string;
+  roadmap: string[];
+  dimensions: {
+    codeQuality: number;
+    documentation: number;
+    testing: number;
+    activity: number;
+    structure: number;
+  };
+}
+
+export interface RepoAnalysisResponse {
+  metadata: RepoMetadata;
+  analysis: AnalysisResult;
+}
+
+export const analyzeRepoRequestSchema = z.object({
+  url: z.string().url(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type AnalyzeRepoRequest = z.infer<typeof analyzeRepoRequestSchema>;
